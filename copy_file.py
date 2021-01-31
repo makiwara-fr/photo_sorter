@@ -24,15 +24,17 @@ def copy_photos(photos, dir):
 		# find when picture has been taken
 		#print(p.name)
 		# split exif info to get dates
-		split = split_date.split(get_date_taken(p.path))
-		year_month = split[0]+ "-"+ split[1]
-		
-		
+		try:
+			split = split_date.split(get_date_taken(p.path))
+			year_month = split[0]+ "-"+ split[1]
+		except:
+			print(f"Problem with photo's EXIF : {p.path} - Defaulting date")
+			year_month = "1970-01"
 		
 		# Check if photo already exists
 		target = os.path.join(dir,year_month, p.name)
 		if os.path.exists(target):
-			#print(f"File {p.name} already exists. Skipping")
+			print(f"File {p.name} already exists. Skipping")
 			skipped += 1
 		else:
 			# new photo so copy from source
