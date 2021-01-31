@@ -1,4 +1,5 @@
 {
 	"PHOTOS_EXTENSIONS" : ["jpg", "jpeg"],
+	"VIDEOS_EXTENSIONS" : ["mp4"],
 	"DEBUG" : "N"
 }

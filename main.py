@@ -120,25 +120,41 @@ def main(arg_list):
 	# Reading directory to be sorted
 	# ==============================
 	
-	# regexp to find all the photos
-	regexp = read_dir.set_regexp(params["PHOTOS_EXTENSIONS"])
 	
-	# Look for photos
-	print("-------------------------")
-	photos = read_dir.scan_folder(input_dir, regexp)
+	# scanning for photos
+	#photos = scanning(params["PHOTOS_EXTENSIONS"], "photo", input_dir )
 	
-	if len(photos) == 0:
-		print("Nothing found. Exiting")
-		sys.exit(0)
-	else:
-		print(f"{len(photos)} photos found")
-	print("-------------------------")
-	print("")
+	#scanning for videos
+	videos = scanning(params["VIDEOS_EXTENSIONS"], "video", input_dir )
 	
 	# Copying files needed to be saved
 	# ================================
-	copy_file.copy_photos(photos, export_dir)
+	#if len(photos)>0 :
+	#	copy_file.copy_photos(photos, export_dir)
+	if len(videos)>0:
+		copy_file.copy_videos(videos, export_dir)
+		#pass
+
+	sys.exit(0)
+
+
+def scanning(params, text, input_dir):
+	# regexp to find all items
+	regexp = read_dir.set_regexp(params)
 	
+	# Look for items
+	print("-------------------------")
+	items = read_dir.scan_folder(input_dir, regexp)
+	
+	if len(items) == 0:
+		print(f"No {text} found.")
+	else:
+		print(f"{len(items)} {text}s found")
+	print("-------------------------")
+	print("")
+
+	return items
+
 
 if __name__ == "__main__":
 	main(sys.argv[1:])

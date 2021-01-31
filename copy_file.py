@@ -3,33 +3,86 @@ import re
 from datetime import datetime
 from PIL import Image
 import shutil
+import hachoir
+import sys
+
+
+from hachoir.parser import createParser
+from hachoir.metadata import extractMetadata
+from hachoir.core.tools import makeUnicode
+
+# Get metadata for video file
+def metadata_videos(filename):
+
+	try:
+		parser = createParser(filename)
+		with parser:
+			try:
+			
+				metadata = extractMetadata(parser)
+		
+				date_exif = datetime.fromisoformat(makeUnicode(metadata.getItems("creation_date").values[0].value))
+				#print(date_exif)
+				return date_exif
+			# "date_time_original"
+			except Exception as err:
+				print("Metadata extraction error: ")
+				print(err)
+			
+			
+	except Exception as e:
+		print("Unable to parse file " + str(filename))
+		print(e)
+		
+	
+	
+			
+
+	
 
 split_date = re.compile(":")
 
-def get_date_taken(path):
+def get_month_taken_photos(path):
 	""" return date of creation base on exif """
-	# need to find something else if exif is missing
-	return Image.open(path)._getexif()[36867]
+	try :
+		date_exif = Image.open(path)._getexif()[36867]
+		split = split_date.split(date_exif)
+		return split[0]+ "-"+ split[1]
+	except Exception as e:
+		print(f"Problem with photo's EXIF : {path.path} - Defaulting date")
+		return "1970-01"
+		
+def get_month_taken_videos(path):
+	""" return date of creation base on exif for videos """
+	try :
+		date_exif = metadata_videos(path.path)
+		if date_exif.month < 10:
+			return str(date_exif.year)+"-0"+str(date_exif.month)
+		else:
+			return str(date_exif.year)+"-"+str(date_exif.month)
+		
+	except Exception as e:
+		print(f"Problem with video's EXIF : {path.path} - Defaulting date")
+		print(e)
+		return "1970-01"
 
-def copy_photos(photos, dir):
+
+	
+def copy(items, dir, text, get_date_taken):
 	
 	print("--------------")
-	print("Copying photos")
+	print("Copying " + text)
 	print("--------------")
 	
 	copied = 0
 	skipped = 0
 	
-	for p in photos:
+	for p in items:
 		# find when picture has been taken
 		#print(p.name)
-		# split exif info to get dates
-		try:
-			split = split_date.split(get_date_taken(p.path))
-			year_month = split[0]+ "-"+ split[1]
-		except:
-			print(f"Problem with photo's EXIF : {p.path} - Defaulting date")
-			year_month = "1970-01"
+		# get year and month from item
+		year_month = get_date_taken(p)
+		#print(year_month)
 		
 		# Check if photo already exists
 		target = os.path.join(dir,year_month, p.name)
@@ -48,4 +101,11 @@ def copy_photos(photos, dir):
 		
 		
 		
-	print(f"{len(photos)} photos provided : {copied} have been copied, {skipped} were skipped")
+	print(f"{len(items)} {text}s provided : {copied} have been copied, {skipped} were skipped")
+	
+	
+def copy_videos(videos, dir):
+	copy(videos, dir, "video", get_month_taken_videos)
+	
+def copy_photos(photos, dir):
+	copy(videos, dir, "photo", get_month_taken_photos)
