@@ -45,8 +45,10 @@ split_date = re.compile(":")
 def get_month_taken_photos(path):
 	""" return date of creation base on exif """
 	try :
-		date_exif = Image.open(path)._getexif()[36867]
+		date_exif = Image.open(path.path)._getexif()[36867]
+		
 		split = split_date.split(date_exif)
+		#print(split[0]+ "-"+ split[1])
 		return split[0]+ "-"+ split[1]
 	except Exception as e:
 		print(f"Problem with photo's EXIF : {path.path} - Defaulting date")
@@ -108,4 +110,4 @@ def copy_videos(videos, dir):
 	copy(videos, dir, "video", get_month_taken_videos)
 	
 def copy_photos(photos, dir):
-	copy(videos, dir, "photo", get_month_taken_photos)
+	copy(photos, dir, "photo", get_month_taken_photos)
