@@ -31,9 +31,7 @@ import copy_file
 
 
 
-def usage():
-    print("-i --input : your input folder")
-    print("-o --output : your output folder. Where the sorted photos will be. This folder must exists")
+
     
 
 def read_parameters():
@@ -65,37 +63,6 @@ def get_app_args_2(arg_list):
     
     return args.input, args.output
 
-def get_app_args(arg_list):
-    """ get the arguments from the command line """
-    try:
-        opts, args = getopt.getopt(arg_list, "hi:o:", ["help","input=","output="])
-    except getopt.GetoptError as err:
-        print("Error in the arguments")
-        usage()
-        sys.exit(2)
-    
-    for opt, arg in opts:
-        if opt in ("-h", "--help"):
-            usage()
-            sys.exit()
-
-        elif opt in ("-o, --output"):
-            export_dir = arg
-
-        elif opt in ("-i", "--input"):
-            input_dir = arg
-        
-
-    try:
-        if input_dir != None:
-            print("Input dir is:", input_dir)
-            if export_dir != None:
-                print("Output dir is:", output_dir)
-                return input_dir, export_dir
-    except:
-        usage()
-        print("Please provide input and output directories")
-        sys.exit(2)
 
 
         
