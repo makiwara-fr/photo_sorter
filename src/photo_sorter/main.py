@@ -25,11 +25,12 @@ import json
 from pathlib import Path
 import argparse
 
-#import read_dir
-#import photo_sorter
-from . import read_dir
-#import read_dir
-from . import copy_file
+if __name__ == "__main__":
+    import read_dir
+    import copy_file
+else:
+    from . import read_dir
+    from . import copy_file
 #import copy_file
 
 
