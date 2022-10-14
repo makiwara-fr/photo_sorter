@@ -25,13 +25,14 @@ import json
 from pathlib import Path
 import argparse
 
+
+# tweaks for script utilisation
 if __name__ == "__main__":
     import read_dir
     import copy_file
 else:
     from . import read_dir
     from . import copy_file
-#import copy_file
 
 
 
@@ -39,10 +40,16 @@ else:
 
 
 def read_parameters():
+    """ fetch main parameters for parsing the different folders
+
+
+        return:
+        -----
+        A dictionary of parameters
+    """
     try:
         with open(Path(os.path.dirname(os.path.realpath(__file__)),'settings.json')) as json_file:
             return json.load(json_file)
-
     except json.JSONDecodeError as j_error:
         print(f"{j_error.msg}, {j_error.pos} line: {j_error.lineno}, column : {j_error.colno}")
     except Exception as e:
